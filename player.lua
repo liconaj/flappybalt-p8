@@ -26,8 +26,7 @@ function update_player()
 	if (plyr.x>112 or plyr.x<8) and not game.lose then
 		movesaws(plyr.dx)
 		touchpads(plyr.dx)
-		change_saws(plyr.dx)
-		addwave(plyr.x,plyr.y,9,60)
+		change_saws(plyr.dx)		
 		plyr.dx*=-1
 	end
 	if plyr.anim then
