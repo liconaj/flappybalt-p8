@@ -1,8 +1,8 @@
 bgcol=0
 
 debug=false
-gravity=0.13 --0.15
-boost=2.75 --2.5
+gravity=0.15
+boost=2.5
 
 function _init()
     t=0
