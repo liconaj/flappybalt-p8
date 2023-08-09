@@ -24,7 +24,7 @@ end
 
 function swcol(pad)
 	if pad.on then
-		pal(pad.c,9)
+		pal(pad.c,7)
 	else
 		pal(pad.c,5)
 	end

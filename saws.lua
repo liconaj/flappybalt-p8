@@ -13,7 +13,7 @@ function make_saws(n,xi,xf,flp)
     ss.x=x
     ss.y=y        
     ss.sprs={16,17,18,19,20}
-    ss.rot=3.5
+    ss.rot=4.5
     ss.flp=flp or false
     ss.on=false
     ss.mov=false

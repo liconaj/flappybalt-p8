@@ -69,24 +69,23 @@ end
 
 function _draw()
 	cls(bgcol)	
-	pal(6,0)	
+	--pal(6,0)	
 	rle2(bgtbl,0,0)
 	draw_saws(lsaws)
 	draw_saws(rsaws)
 	draw_waves()
-	map(0,0,0,0,16,16)	
-	if not game.lose then
-		draw_player()
-	end
+	map(0,0,0,0,16,16)		
 	if game.started then
 		cprint(score,75,13,true)
 	end
 	draw_pads()
     draw_parts()
-
 	if highscore>0 then
 		cprint(highscore,23,1)
-	end	
+	end
+	if not game.lose then
+		draw_player()
+	end
 
 	if debug then
 	draw_coll(plyr.coll,10)
