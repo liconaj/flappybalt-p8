@@ -33,8 +33,7 @@ function update_saws(ss)
     ss.coll.x=ss.flp and ss.x+1 or ss.x
 end
 
-function draw_saws(ss)
-    --palt(9,13)
+function draw_saws(ss)    
     for i=1,ss.num do
         local n=ss.sprs[flr((ss[i]+time()*ss.rot*10))%#ss.sprs+1]
         local y=ss.y+ss.sh*(i-1)

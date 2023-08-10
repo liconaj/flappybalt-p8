@@ -7,7 +7,7 @@ debug=false
 gravity=0.15
 boost=2.5
 
-bgstr="`ト`トmナmナmナmナmナmナmナmナmナmナmナmナmナmナmナmナmナmナmろafmvmれagmvmるahmvmlammたahmvmlammそaimvmsafmせajmvmsafmすakmoacmdmsafmしalmoacmdmsafmさammnaemcagmkagmこanmnaemcahmiahmけaomlahmbaimfajmけaomkaimbaymくapmjakmaaymきa♥aymかa☉aymうa⬅️aymうa⬅️aymうa⬅️aymうa⬅️aymうa⬅️aymうa⬅️aymうa⬅️aymうa⬅️aymうa⬅️aymうa⬅️aymkavm{aw`lahaymkavm{aw`lahaymkavm{aw`lahaymkaim☉aw`lahaymkaim☉aw`lahaymkaim█a○`lahaymkaim~a▒`lahaymkaim~a▒`lahaymkaim~a▒`lahaymkajm}a▒`taymkakmraamiao`●aymkalmqaamhap`●aymkammpaamhap`●`ra█moaamgaq`●`ra▒mnaamfar`●`ra🐱mmaameas`●`ra♥mhaamda~`|`ra♥mhaamda~`|`ra☉mgaamca○`|`raの`|`raの`|`raの`|`raの`|`raの`|`raの`|`raの`|`raの`|`▒aこ`|`▒aこ`|`▒aこ`|`▒aこ`|`▒aこ`|`▒aこ`|`▒aこ`|`▒aこ`|`▒aこ`|`zaち`|`zaち`|`zaち`|`▒aこ`|`▒aこ`|`▒aこ`|`▒aこ`|`▒a◆`lah`|`▒a◆`lah`|`|a⬆️`lah`|`|a⬆️`lah`|`|a⬆️`lah`|`|a⬆️`lah`|`|a⬆️`lah`|`|a⬆️`lah`|`|a⬆️`lah`|`|a⬆️`lah`|`za∧`lah`|`za∧`lah`|`ya❎`lah`|`xa▤`lah`|`waq`🐱af`lah`|`var`🐱af`lah`|`uas`🐱af`lah`|`~aj`▒ag`lah`|`~aj`█ah`lah`|`█ah`~aj`lah`|`○ai`~aj`lah`|`uag`cai`~aj`lah`|`uah`aaj`~aj`lah`|`uas`○ai`lah`|`var`ま`uat`ほ`uat`ほ`uau`へ`}am`へ`♥ac`へ`☉ab`へ`웃ab`ふ`웃ab`ふ`⌂aa`ふ`ナ`ナ`ナ`ナ`ナ`ナ`ナ`ナ"
+bgstr="`ト`トoナoナoナoナoナoナoナoナoナoナoナoナoナoナoナoナoナoナoろmfovoれmgovoるmhovolmmoたmhovolmmoそmiovosmfoせmjovosmfoすmkoomcodosmfoしmloomcodosmfoさmmonmeocmgokmgoこmnonmeocmhoimhoけmoolmhobmiofmjoけmookmiobmyoくmpojmkoamyoきm♥myoかm☉myoうm⬅️myoうm⬅️myoうm⬅️myoうm⬅️myoうm⬅️myoうm⬅️myoうm⬅️myoうm⬅️myoうm⬅️myoうm⬅️myoうmwalmhmyogmvo○mwalmhmyogmvo○mwalmhmyogmvo○mwalmhmyogmio😐mwalmhmyogmio○m░almhmyogmio○m░almhmyogmio~m✽almhmyogmio~m✽almhmyogmio~m✽atmyogmjo}msa●myogmkormaoimsa●myogmloqmaohmta●armjodmmopmaohmta●arm|oomaogmua●arm}onmaofmva●arm~ommaoem▒a|arm⬇️ohmaodm🐱a|arm⬇️ohmaodm🐱a|arm░ogmaocm⬇️a|armのa|armのa|armのa|armのa|armのa|armのa|armのa|a|mそa|a}mせa|a▒mこa|a▒mこa|a▒mこa|a▒mこa|a▒mこa|a▒mこa|a▒mこa|azmちa|azmちa|azmちa|a▒mこa|a▒mこa|a▒mこa|a▒mこa|a▒m◆almha|a▒m◆almha|a|m⬆️almha|a|m⬆️almha|a|m⬆️almha|a|m⬆️almha|a|m⬆️almha|a|m⬆️almha|a|m⬆️almha|a|m⬆️almha|azm∧almha|azm∧almha|aym❎almha|axm▤almha|awmqa🐱mfalmha|avmra🐱mfalmha|aumsa🐱mfalmha|a~mja▒mgalmha|a~mja█mhalmha|a█mha~mjalmha|a○mia~mjalmha|aumgacmia~mjalmha|aumhaamja~mjalmha|aumsa○mialmha|avmraまaumtaほaumtaほaumuaへa}mmaへa♥mcaへa☉mbaへa웃mbaふa웃mbaふa⌂maaふaナaナaナaナaナaナaナaナ"
 
 function _init()
     t=0
@@ -68,20 +68,20 @@ function _update60()
 end
 
 function _draw()
-	cls(bgcol)	
-	--pal(6,0)	
+	cls(bgcol)
+	pal(9,0)	
 	rle2(bgtbl,0,0)
 	draw_saws(lsaws)
 	draw_saws(rsaws)
 	draw_waves()
 	map(0,0,0,0,16,16)		
 	if game.started then
-		cprint(score,75,13,true)
-	end
+		cprint(score,75,1,true)
+	end	
 	draw_pads()
     draw_parts()
 	if highscore>0 then
-		cprint(highscore,23,1)
+		cprint(highscore,23,13)
 	end
 	if not game.lose then
 		draw_player()
