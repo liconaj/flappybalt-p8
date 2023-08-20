@@ -16,7 +16,7 @@ function update_player()
 	plyr.x+=plyr.dx
 	plyr.y+=plyr.dy			
 	
-	local cutted=collide(plyr.coll,lsaws.coll) or collide(plyr.coll,rsaws.coll)
+	local cutted=plyrsawscoll(lsaws) or plyrsawscoll(rsaws)
 	if plyr.y<4 or plyr.y>116 or cutted then		
 		game.lose=true		
 		hidesaws(lsaws)
@@ -26,7 +26,7 @@ function update_player()
 	if (plyr.x>112 or plyr.x<8) and not game.lose then
 		movesaws(plyr.dx)
 		touchpads(plyr.dx)
-		change_saws(plyr.dx)		
+		changesaws(plyr.dx)		
 		plyr.dx*=-1
 	end
 	if plyr.anim then
@@ -45,8 +45,16 @@ function draw_player()
 	spr(n,plyr.x,plyr.y,1,1,plyr.dx<0)
 end
 
+function plyrsawscoll(ss)
+	for s in all(ss) do
+		if collide(plyr.coll,s.coll) then
+			return true
+		end
+	end
+	return false
+end
+
 function flyplyr()
-	--addwave(plyr.x,plyr.y,5,2,80)	
 	plyr.dy=-boost
 	plyr.anim=true
 end

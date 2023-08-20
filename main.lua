@@ -6,20 +6,24 @@ cartdata("liconaj_flappybalt")
 debug=false
 gravity=0.15
 boost=2.5
+sawsize=16
 
 bgstr="`ト`トoナoナoナoナoナoナoナoナoナoナoナoナoナoナoナoナoナoナoろmfovoれmgovoるmhovolmmoたmhovolmmoそmiovosmfoせmjovosmfoすmkoomcodosmfoしmloomcodosmfoさmmonmeocmgokmgoこmnonmeocmhoimhoけmoolmhobmiofmjoけmookmiobmyoくmpojmkoamyoきm♥myoかm☉myoうm⬅️myoうm⬅️myoうm⬅️myoうm⬅️myoうm⬅️myoうm⬅️myoうm⬅️myoうm⬅️myoうm⬅️myoうm⬅️myoうmwalmhmyogmvo○mwalmhmyogmvo○mwalmhmyogmvo○mwalmhmyogmio😐mwalmhmyogmio○m░almhmyogmio○m░almhmyogmio~m✽almhmyogmio~m✽almhmyogmio~m✽atmyogmjo}msa●myogmkormaoimsa●myogmloqmaohmta●armjodmmopmaohmta●arm|oomaogmua●arm}onmaofmva●arm~ommaoem▒a|arm⬇️ohmaodm🐱a|arm⬇️ohmaodm🐱a|arm░ogmaocm⬇️a|armのa|armのa|armのa|armのa|armのa|armのa|armのa|a|mそa|a}mせa|a▒mこa|a▒mこa|a▒mこa|a▒mこa|a▒mこa|a▒mこa|a▒mこa|azmちa|azmちa|azmちa|a▒mこa|a▒mこa|a▒mこa|a▒mこa|a▒m◆almha|a▒m◆almha|a|m⬆️almha|a|m⬆️almha|a|m⬆️almha|a|m⬆️almha|a|m⬆️almha|a|m⬆️almha|a|m⬆️almha|a|m⬆️almha|azm∧almha|azm∧almha|aym❎almha|axm▤almha|awmqa🐱mfalmha|avmra🐱mfalmha|aumsa🐱mfalmha|a~mja▒mgalmha|a~mja█mhalmha|a█mha~mjalmha|a○mia~mjalmha|aumgacmia~mjalmha|aumhaamja~mjalmha|aumsa○mialmha|avmraまaumtaほaumtaほaumuaへa}mmaへa♥mcaへa☉mbaへa웃mbaふa웃mbaふa⌂maaふaナaナaナaナaナaナaナaナ"
+updscores={5,10,20,25,40,45}
+--updscores={3,4,5,6,7,8}
+sawsprs={32,34,36,38,40}
 
 function _init()
     t=0
-	game={}    
+	game={}
 	btnrel=true
 	chsaws=nil
 	highscore=geths()
     make_parts()
 	make_waves()
 	restart()
-	lsaws=make_saws(1,-1,7,false)	
-	rsaws=make_saws(1,121,113,true)	
+	lsaws=make_saws(-9,0)
+	rsaws=make_saws(121,113,true)
 	bgtbl=s2t(bgstr)
 end
 
@@ -41,24 +45,13 @@ function _update60()
 		if score > highscore then
 			seths(score)
 		end
-		if (t>80) restart()
+		if (t>80) then
+			restart()
+			reset_saws(lsaws)
+			reset_saws(rsaws)
+		end
 	elseif game.started then
 		update_player()
-	end
-	if chsaws=="l" and not lsaws.mov then
-		lsaws=make_saws(lsaws.num+1,-1,7,false)
-		lsaws.mov=true
-		showsaws(lsaws)
-		chsaws=nil
-	elseif chsaws=="r" and not rsaws.mov then
-		rsaws=make_saws(rsaws.num+1,121,113,true)	
-		rsaws.mov=true
-		showsaws(rsaws)
-		chsaws=nil
-	end
-	if game.lose and not (lsaws.mov or rsaws.mov) then
-		lsaws=make_saws(1,-1,7,false)	
-		rsaws=make_saws(1,121,113,true)	
 	end
 	update_pads()
     update_parts()
@@ -69,7 +62,8 @@ end
 
 function _draw()
 	cls(bgcol)
-	pal(9,0)	
+	pal(9,0)
+	pal(15,12)
 	rle2(bgtbl,0,0)
 	draw_saws(lsaws)
 	draw_saws(rsaws)
@@ -77,7 +71,7 @@ function _draw()
 	map(0,0,0,0,16,16)		
 	if game.started then
 		cprint(score,75,1,true)
-	end	
+	end
 	draw_pads()
     draw_parts()
 	if highscore>0 then
@@ -89,10 +83,14 @@ function _draw()
 
 	if debug then
 	draw_coll(plyr.coll,10)
-	draw_coll(lsaws.coll,15)
-	draw_coll(rsaws.coll,15)
-	print(lsaws.mov,0,0,10)	
-	print(rsaws.mov,0,9,10)	
+	for s in all(lsaws) do
+		draw_coll(s.coll,15)	
+	end
+	for s in all(rsaws) do
+		draw_coll(s.coll,15)	
+	end
+	print(lsaws.moving,0,0,10)	
+	print(rsaws.moving,0,9,10)	
 	end
 end
 
@@ -102,7 +100,8 @@ function restart()
 	game.started=false
 	game.lose=false	
 	make_player()
-	make_pads()	
+	make_pads()
+	issupd=1
 end
 
 function zfill(txt,n)
@@ -139,6 +138,7 @@ end
 function lerp(a,b,t)
 	return a*(1-t)+b*t
 end
+
 
 function draw_coll(o,col)	
 	rectfill(o.x,o.y,o.x+o.w,o.y+o.h,col)

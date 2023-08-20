@@ -29,10 +29,10 @@ function mkpart(x,y,v,a)
     dy=v*cos(a)
     return {
         x=x,
-        y=y,        
+        y=y,      
         dx=dx,
         dy=dy,
-        spr=21,   
+        spr=10,
         flip=rnd{0,1}==0,
         life=rndr(200,300)
     }

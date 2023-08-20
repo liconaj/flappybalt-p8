@@ -1,55 +1,91 @@
-function make_saws(n,xi,xf,flp)    
-    local ss={} 
-    ss.num=n
-    ss.sh=16
-    ss.h=ss.sh*ss.num-1
-    ss.xi=xi
-    ss.xf=xf
-    ss.yf=nil
-    ss.yl=12
-    ss.yr=116-ss.h
-    local x=ss.xi
-    local y=rndr(ss.yl,ss.yr)
-    ss.x=x
-    ss.y=y        
-    ss.sprs={16,17,18,19,20}
-    ss.rot=4.5
-    ss.flp=flp or false
-    ss.on=false
-    ss.mov=false
-    ss.mfunc=nil
-    for i=1,ss.num do
-        add(ss,rndr(0,#ss.sprs-1))
-    end    
-    ss.coll={x=nil,y=nil,w=6,h=ss.h-5}
+function addsaw(ss)
+    add(ss, {
+        x=nil,
+        y=nil,     
+        spr=rndr(1,#sawsprs),
+        coll={x=nil,y=nil,w=sawsize-6,h=sawsize-6}
+    })
+    newsspos(ss)
+end
+
+
+function make_saws(xi,xf,flp)
+    local ss={
+        x=xi,
+        dx=xf-xi,
+        xi=xi,
+        xf=xf,
+        y=nil,
+        yf=nil,
+        yl=12,
+        yr=nil,
+        rot=4.5,
+        flp=flp or false,
+        moving=false,  
+        mfunc=nil,
+        hidden=false,
+        adding=false
+    }
+    addsaw(ss)
     return ss
 end
 
+
+function reset_saws(ss)
+    for s in all(ss) do
+        del(ss,s)
+    end
+    addsaw(ss)
+end
+
 function update_saws(ss)
-    if ss.mov then
-        ss.mov=not ss.mfunc()
-    end
-    ss.coll.y=ss.y+2
-    ss.coll.x=ss.flp and ss.x+1 or ss.x
-end
-
-function draw_saws(ss)    
-    for i=1,ss.num do
-        local n=ss.sprs[flr((ss[i]+time()*ss.rot*10))%#ss.sprs+1]
-        local y=ss.y+ss.sh*(i-1)
-        spr(n,ss.x,y,1,2,ss.flp)
+    if ss.moving then
+        ss.moving=not ss.mfunc()
+        updatespos(ss)
+    elseif ss.adding then
+        addsaw(ss)
+        ss.moving=true
+        ss.adding=false
+        showsaws(ss)
     end
 end
 
-function change_saws(dx)
+function draw_saws(ss)
+    for s in all(ss) do
+       local n=sawsprs[flr(s.spr+time()*ss.rot*10)%#sawsprs+1]
+       spr(n,s.x,s.y,2,2,ss.flp) 
+    end
+end
+
+function newsspos(ss)
+    local th=sawsize*#ss-1
+    ss.yr=116-th
+    ss.y=rndr(ss.yl,ss.yr)
+    updatespos(ss)
+end
+
+function updatespos(ss)
+    for i=1,#ss do
+        local s=ss[i]
+        local offset=ss.flp and 1 or 0
+        s.x=ss.x-offset
+        s.y=ss.y+sawsize*(i-1)        
+        s.coll.x=ss.x+2
+        s.coll.y=s.y+2
+    end
+end
+
+function changesaws(dx)
     local ss
     if dx>0 then
         ss=lsaws
     else
-        ss=rsaws        
+        ss=rsaws
     end
-    if score%5==0 and ss.num<4 then
-        chsaws=ss==lsaws and "l" or "r"
+    
+    if issupd <= #updscores and score==updscores[issupd] then
+        issupd+=1
+        ss.adding=true
         hidesaws(ss)
     end
 end
@@ -71,29 +107,29 @@ function movesaws(dx)
     else
         ss=rsaws        
     end
-    ss.mov=true
-    if not ss.on then
+    ss.moving=true
+    if not ss.hidden then
         showsaws(ss)
     else
-        local old=ss.yf
-        while ss.yf==old do
+        ss.yf=ss.y
+        while abs(ss.yf-ss.y)<8 do
             ss.yf=ss.y+rnd{1,-1}*rndr(20,50)
             ss.yf=mid(ss.yf,ss.yl,ss.yr)
         end
         ss.mfunc=lerpsaws(ss,"y","yf","y")
-    end    
+    end
 end
 
 function showsaws(ss)
-    ss.on=true        
+    ss.hidden=true        
     ss.mfunc=lerpsaws(ss,"xi","xf","x")
 end
 
 function hidesaws(ss)
-    if not ss.on then
+    if not ss.hidden then
         return
     end
-    ss.mov=true
-    ss.on=false    
+    ss.moving=true
+    ss.hidden=false    
     ss.mfunc=lerpsaws(ss,"xf","xi","x")
 end
