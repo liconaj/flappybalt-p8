@@ -25,13 +25,16 @@ function _init()
 	lsaws=make_saws(-9,0)
 	rsaws=make_saws(121,113,true)
 	bgtbl=s2t(bgstr)
+	menuitem(1,"reset highscore", function ()
+		seths(0)
+	end)
 end
 
 function _update60()
 	if btn(4) or btn(5) then
 		if not game.started then
 			game.started=true
-			plyr.anim=true			
+			plyr.anim=true
 		elseif btnrel and not game.lose then
 			flyplyr()
 		end
