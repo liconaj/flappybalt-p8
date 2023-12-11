@@ -1,135 +1,115 @@
 function addsaw(ss)
-    add(ss, {
-        x=nil,
-        y=nil,     
-        spr=rndr(1,#sawsprs),
-        coll={x=nil,y=nil,w=sawsize-6,h=sawsize-6}
-    })
-    newsspos(ss)
+    local y
+    local x = ss.xi
+    if #ss == 0 then
+        y = rndr(ss.yl, ss.yr - 15)
+    else
+        y = newypos(ss)
+    end
+    local ns = {
+        xi = ss.xi,
+        xf = ss.xf,
+        x = x,
+        y = y,
+        yf = 0,
+        spr = rndr(1, #sawsprs),
+        coll = { x = x + 2, y = y + 2, w = sawsize - 6, h = sawsize - 6 },
+        moving = true,
+        hidden = true
+    }
+    ns.mfunc = lerpsaw(ns, "xi", "xf", "x", 2)
+
+    local isfirst = #ss == 0 or y < ss[1].y
+    add(ss, ns, isfirst and 1 or #ss + 1)
+    local th = sawsize * #ss - 1
+    ss.yr = maxyr - th
 end
 
+function newypos(ss)
+    local newypos = {}
+    local uppos = ss[1].y - sawsize
+    local downpos = ss[1].y + sawsize * #ss
+    mydownpos = downpos
+    if uppos >= ss.yl then
+        add(newypos, uppos)
+    end
+    if downpos < maxyr - 15 then
+        add(newypos, downpos)
+    end
+    return rnd(newypos)
+end
 
-function make_saws(xi,xf,flp)
-    local ss={
-        x=xi,
-        dx=xf-xi,
-        xi=xi,
-        xf=xf,
-        y=nil,
-        yf=nil,
-        yl=12,
-        yr=nil,
-        rot=4.5,
-        flp=flp or false,
-        moving=false,  
-        mfunc=nil,
-        hidden=false,
-        adding=false
+function make_saws(xi, xf, flp)
+    local ss = {
+        dx = xf - xi,
+        xi = xi,
+        xf = xf,
+        yl = minyl,
+        yr = maxyr,
+        rot = 4.5,
+        flp = flp or false
     }
-    addsaw(ss)
     return ss
 end
 
-
 function reset_saws(ss)
+    ss.yr = maxyr
     for s in all(ss) do
-        del(ss,s)
+        del(ss, s)
     end
-    addsaw(ss)
 end
 
-function update_saws(ss)
-    if ss.moving then
-        ss.moving=not ss.mfunc()
-        updatespos(ss)
-    elseif ss.adding then
-        addsaw(ss)
-        ss.moving=true
-        ss.adding=false
-        showsaws(ss)
+function update_saws(s)
+    if s.moving then
+        s.moving = not s.mfunc()
     end
+    s.coll.x = s.x + 2
+    s.coll.y = s.y + 2
 end
 
 function draw_saws(ss)
+    i = 1
     for s in all(ss) do
-       local n=sawsprs[flr(s.spr+time()*ss.rot*10)%#sawsprs+1]
-       spr(n,s.x,s.y,2,2,ss.flp) 
+        local n = sawsprs[flr(s.spr + time() * ss.rot * 10) % #sawsprs + 1]
+        local offset = ss.flp and -1 or 0
+        spr(n, s.x + offset, s.y, 2, 2, ss.flp)
+        i += 1
     end
 end
 
-function newsspos(ss)
-    local th=sawsize*#ss-1
-    ss.yr=116-th
-    ss.y=rndr(ss.yl,ss.yr)
-    updatespos(ss)
-end
-
-function updatespos(ss)
-    for i=1,#ss do
-        local s=ss[i]
-        local offset=ss.flp and 1 or 0
-        s.x=ss.x-offset
-        s.y=ss.y+sawsize*(i-1)        
-        s.coll.x=ss.x+2
-        s.coll.y=s.y+2
-    end
-end
-
-function changesaws(dx)
-    local ss
-    if dx>0 then
-        ss=lsaws
-    else
-        ss=rsaws
-    end
-    
-    if issupd <= #updscores and score==updscores[issupd] then
-        issupd+=1
-        ss.adding=true
-        hidesaws(ss)
-    end
-end
-
-function lerpsaws(ss,a,b,var)
-    local t0=time()
+function lerpsaw(s, a, b, var, f)
+    local t0 = time()
+    s.moving = true
     return function()
-        local t=time()-t0
-        t=var=="y" and t/2.5 or 2*t
-        ss[var]=lerp(ss[a],ss[b],easinout(t))
-        return ss[var]==ss[b]
-    end    
+        local t = time() - t0
+        t = f * t
+        s[var] = lerp(s[a], s[b], easinout(t))
+        return s[var] == s[b]
+    end
 end
 
-function movesaws(dx)
-    local ss
-    if dx>0 then        
-        ss=lsaws
+function movesaws(ss)
+    if #ss == 0 then
+        addsaw(ss)
+    elseif issupd <= #updscores and score == updscores[issupd] then
+        issupd += 1
+        addsaw(ss)
     else
-        ss=rsaws        
-    end
-    ss.moving=true
-    if not ss.hidden then
-        showsaws(ss)
-    else
-        ss.yf=ss.y
-        while abs(ss.yf-ss.y)<8 do
-            ss.yf=ss.y+rnd{1,-1}*rndr(20,50)
-            ss.yf=mid(ss.yf,ss.yl,ss.yr)
+        local y, yf, dy
+        y = ss[1].y
+        yf = y
+        while abs(dy or 0) < 4 do
+            yf = y + rnd { 1, -1 } * rndr(20, 50)
+            yf = mid(yf, ss.yl, ss.yr)
+            dy = yf - y
         end
-        ss.mfunc=lerpsaws(ss,"y","yf","y")
+        for s in all(ss) do
+            s.yf = s.y + dy
+            s.mfunc = lerpsaw(s, "y", "yf", "y", 0.3)
+        end
     end
 end
 
-function showsaws(ss)
-    ss.hidden=true        
-    ss.mfunc=lerpsaws(ss,"xi","xf","x")
-end
-
-function hidesaws(ss)
-    if not ss.hidden then
-        return
-    end
-    ss.moving=true
-    ss.hidden=false    
-    ss.mfunc=lerpsaws(ss,"xf","xi","x")
+function hidesaws(s)
+    s.mfunc = lerpsaw(s, "xf", "xi", "x", 2)
 end
