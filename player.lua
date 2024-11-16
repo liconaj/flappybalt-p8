@@ -16,7 +16,7 @@ function update_player()
 	plyr.x += plyr.dx
 	plyr.y += plyr.dy
 
-	local cutted = plyrsawscoll(lsaws) or plyrsawscoll(rsaws)
+	local cutted = plyrsawscoll(lsaws) or plyrsawscoll(rsaws) or plyrsawscoll(ssaws)
 	if plyr.y < 4 or plyr.y > 116 or cutted then
 		game.lose = true
 		foreach(lsaws, hidesaws)

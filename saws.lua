@@ -7,6 +7,8 @@ function addsaw(ss)
         y = newypos(ss)
     end
     local ns = {
+        flp = ss.flp,
+        rot = ss.rot,
         xi = ss.xi,
         xf = ss.xf,
         x = x,
@@ -15,7 +17,8 @@ function addsaw(ss)
         spr = rndr(1, #sawsprs),
         coll = { x = x + 2, y = y + 2, w = sawsize - 6, h = sawsize - 6 },
         moving = true,
-        hidden = true
+        hidden = true,
+        delete = false
     }
     ns.mfunc = lerpsaw(ns, "xi", "xf", "x", 2)
 
@@ -41,6 +44,7 @@ end
 
 function make_saws(xi, xf, flp)
     local ss = {
+        first = true,
         dx = xf - xi,
         xi = xi,
         xf = xf,
@@ -59,20 +63,28 @@ function reset_saws(ss)
     end
 end
 
-function update_saws(s)
+function update_saws(ss)
+    for saw in all(ss) do
+        local todel = updatesaw(saw)
+        if (todel) del(ss, saw)
+    end
+end
+
+function updatesaw(s)
     if s.moving then
         s.moving = not s.mfunc()
+        s.coll.x = s.x + 2
+        s.coll.y = s.y + 2
     end
-    s.coll.x = s.x + 2
-    s.coll.y = s.y + 2
+    return s.delete
 end
 
 function draw_saws(ss)
     i = 1
     for s in all(ss) do
-        local n = sawsprs[flr(s.spr + time() * ss.rot * 10) % #sawsprs + 1]
-        local offset = ss.flp and -1 or 0
-        spr(n, s.x + offset, s.y, 2, 2, ss.flp)
+        local n = sawsprs[flr(s.spr + time() * s.rot * 10) % #sawsprs + 1]
+        local offset = s.flp and -1 or 0
+        spr(n, s.x + offset, s.y, 2, 2, s.flp)
         i += 1
     end
 end
@@ -88,13 +100,55 @@ function lerpsaw(s, a, b, var, f)
     end
 end
 
+function shootsaw(ss)
+    local v0 = 2.5 --4
+    local ids = rnd{1,#ss}
+    local saw = ss[ids]
+    local t0 = time()
+    local x = saw.x
+    local y = saw.y
+    add(ssaws, saw)
+    del(ss, saw)
+    saw.delete = false
+    saw.moving = true
+    saw.calcd = false
+    saw.mfunc = function()
+        local t = time() - t0
+        if t < 0.5 then
+            saw.x = x + rndr(-2,2)
+            saw.y = y + rndr(-2,2)
+        elseif t < 5 then
+            if not saw.calcd then
+                saw.calcd = true
+                local ca = plyr.x - saw.x
+                local co = plyr.y - saw.y
+                local a = atan2(ca, co)
+
+                saw.dx = v0 * cos(a)
+                saw.dy = v0 * sin(a)
+            end
+            saw.dx *= 0.999
+            saw.dy += gravity*0.1 --0.5
+            saw.x += saw.dx
+            saw.y += saw.dy
+        else
+            saw.delete = true
+            return false
+        end
+    end
+end
+
 function movesaws(ss)
-    if #ss == 0 then
+    local updating = issupd <= #updscores
+    local toupdate = score == updscores[issupd]
+    local toshoot = score == dwnscores[isshoot]
+    if updating and (toupdate or #ss==0) then
+        if (#ss>0) issupd += 1
         addsaw(ss)
-    elseif issupd <= #updscores and score == updscores[issupd] then
-        issupd += 1
-        addsaw(ss)
-    else
+    elseif not updating and toshoot then
+        isshoot += 1
+        shootsaw(ss)
+    elseif #ss > 0 then
         local y, yf, dy
         y = ss[1].y
         yf = y

@@ -11,12 +11,21 @@ minyl = 12
 maxyr = 116
 
 bgstr = "`ト`トoナoナoナoナoナoナoナoナoナoナoナoナoナoナoナoナoナoナoろmfovoれmgovoるmhovolmmoたmhovolmmoそmiovosmfoせmjovosmfoすmkoomcodosmfoしmloomcodosmfoさmmonmeocmgokmgoこmnonmeocmhoimhoけmoolmhobmiofmjoけmookmiobmyoくmpojmkoamyoきm♥myoかm☉myoうm⬅️myoうm⬅️myoうm⬅️myoうm⬅️myoうm⬅️myoうm⬅️myoうm⬅️myoうm⬅️myoうm⬅️myoうm⬅️myoうmwalmhmyogmvo○mwalmhmyogmvo○mwalmhmyogmvo○mwalmhmyogmio😐mwalmhmyogmio○m░almhmyogmio○m░almhmyogmio~m✽almhmyogmio~m✽almhmyogmio~m✽atmyogmjo}msa●myogmkormaoimsa●myogmloqmaohmta●armjodmmopmaohmta●arm|oomaogmua●arm}onmaofmva●arm~ommaoem▒a|arm⬇️ohmaodm🐱a|arm⬇️ohmaodm🐱a|arm░ogmaocm⬇️a|armのa|armのa|armのa|armのa|armのa|armのa|armのa|a|mそa|a}mせa|a▒mこa|a▒mこa|a▒mこa|a▒mこa|a▒mこa|a▒mこa|a▒mこa|azmちa|azmちa|azmちa|a▒mこa|a▒mこa|a▒mこa|a▒mこa|a▒m◆almha|a▒m◆almha|a|m⬆️almha|a|m⬆️almha|a|m⬆️almha|a|m⬆️almha|a|m⬆️almha|a|m⬆️almha|a|m⬆️almha|a|m⬆️almha|azm∧almha|azm∧almha|aym❎almha|axm▤almha|awmqa🐱mfalmha|avmra🐱mfalmha|aumsa🐱mfalmha|a~mja▒mgalmha|a~mja█mhalmha|a█mha~mjalmha|a○mia~mjalmha|aumgacmia~mjalmha|aumhaamja~mjalmha|aumsa○mialmha|avmraまaumtaほaumtaほaumuaへa}mmaへa♥mcaへa☉mbaへa웃mbaふa웃mbaふa⌂maaふaナaナaナaナaナaナaナaナ"
---updscores = { 5, 10, 20, 25, 40, 45 }
-updscores = { 3, 6, 9, 12, 15, 18 }
+updscores = {  5, 10, 20, 25, 40, 45 }
+dwnscores = { 50, 55, 65, 70, 80, 85, 95, 100}
+
 sawsprs = { 32, 34, 36, 38, 40 }
 
---seed = ceil(rnd(100))
-srand(87)
+function restart()
+	t = 0
+	score = 0
+	game.started = false
+	game.lose = false
+	make_player()
+	make_pads()
+	issupd = 1
+	isshoot = 1
+end
 
 function _init()
 	t = 0
@@ -27,6 +36,7 @@ function _init()
 	make_parts()
 	make_waves()
 	restart()
+	ssaws = {}
 	lsaws = make_saws(-9, 0)
 	rsaws = make_saws(121, 113, true)
 	bgtbl = s2t(bgstr)
@@ -64,8 +74,9 @@ function _update60()
 	update_pads()
 	update_parts()
 	update_waves()
-	foreach(lsaws, update_saws)
-	foreach(rsaws, update_saws)
+	update_saws(lsaws)
+	update_saws(rsaws)
+	update_saws(ssaws)
 end
 
 function _draw()
@@ -75,6 +86,7 @@ function _draw()
 	rle2(bgtbl, 0, 0)
 	draw_saws(lsaws)
 	draw_saws(rsaws)
+	draw_saws(ssaws)
 	draw_waves()
 	map(0, 0, 0, 0, 16, 16)
 	if game.started then
@@ -97,19 +109,13 @@ function _draw()
 		for s in all(rsaws) do
 			draw_coll(s.coll, 15)
 		end
-		print(lsaws.moving, 0, 0, 10)
-		print(rsaws.moving, 0, 9, 10)
+		for s in all(ssaws) do
+			draw_coll(s.coll, 15)
+		end
+		print("#lsaws:"..#lsaws, 0, 0, 10)
+		print("#rsaws:"..#rsaws, 0, 10, 10)
+		print("#ssaws:"..#ssaws, 0, 20, 10)
 	end
-end
-
-function restart()
-	t = 0
-	score = 0
-	game.started = false
-	game.lose = false
-	make_player()
-	make_pads()
-	issupd = 1
 end
 
 function zfill(txt, n)
