@@ -139,13 +139,17 @@ function shootsaw(ss)
 end
 
 function movesaws(ss)
-    local updating = issupd <= #updscores
-    local toupdate = score == updscores[issupd]
-    local toshoot = score == dwnscores[isshoot]
-    if updating and (toupdate or #ss==0) then
+    local toupdate = (score == updscores[issupd]) or (score > 103 and score % 3 == 0)
+    local toshoot = (score == dwnscores[isshoot]) or (score > 100 and score % 3 == 2)
+    if (toupdate or #ss == 0) and #ss < 4 then
         if (#ss>0) issupd += 1
+        if #ss==0 and score >= 100 then
+            addsaw(ss)
+            addsaw(ss)
+            addsaw(ss)
+        end
         addsaw(ss)
-    elseif not updating and toshoot then
+    elseif toshoot then
         isshoot += 1
         shootsaw(ss)
     elseif #ss > 0 then
