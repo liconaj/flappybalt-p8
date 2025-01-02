@@ -16,6 +16,8 @@ dwnscores = { 50, 55, 65, 70, 80, 85, 95, 100}
 
 sawsprs = { 32, 34, 36, 38, 40 }
 
+notes = "c#2,d2,a2,b-2,d2,c#2,c#3,b-2,a2,d3,b-2,g2,e2,f2,a2,c#2,f1,c#2,d2,a1,a2,b-2,g1,d2,c#2,c#2,b-2,a2,d2,c#2,d2,a1,a2,b-2,g1,d2,c#2,c2#,b-2,a2,f1,d1,a1,c#1,e2,a1,d1,f1,d2,e2,g2,c#2,f2,a2,f2,b1,b1,e2,e2,c2,a2,g2,d2,g2,g2,e-2,c2,c2,e2,c2,c2,f2,c2,e-2,f#2,a1,d2,g2,g1,f2,g#2,g#1,f2,a2,a1,e2,a1,a1,e1,a1,b-1,a2,d2,a1,f2,d2,g1,b-1,d2,e2,a1,a1,c#2,d2,b-1,e-2,e-1,b-1,g2,e-2,b-1,e-2,f1,b-1,d2,b-1,d2,a1,d2,d1,d2,f2,e2,f1,f2,f1,b-1,d2,g#2,f2,g#2,d2,g2,f#2,c2,f#2,g1,c2,e2,b-2,e2,b-2,b-1,e2,a2,g2,e2,g2,a1,d2,f2,d3,f1,b2,f2,c2,f1,d2,f1,d2,f1,d2,f1,c2,f1,b1,f1,b1,g1,b1,g1,c2,e1,d2,f1,c2,f2,b1,d2,f2,a1,d3,b2,c3,a2,b-2,g2,f1,f2,f1,f2,f1,f2,a1,c2,f2,f2,f1,b-1,d2,b1,c2,c3,a2,b2,g2,f1,e2,f2,d2,c#3,d3,b-1,d2,c#,a1,a2,c#2,f1,c#2,d2,a1"
+
 function restart()
 	t = 0
 	score = 0
@@ -59,6 +61,9 @@ function _update60()
 	end
 
 	if game.lose then
+		if t==0 then
+			sfx(0)
+		end
 		t += 1
 		if score > highscore then
 			seths(score)
@@ -182,4 +187,9 @@ function rle2(t, x0, y0, tr)
 		if (col != tr) line(x, y, x + len - 1, y, col) x += len
 		if (x > mw) x = x0 y += 1
 	end
+end
+
+function rndc(tabl)
+	local i = rndr(1,#tabl)
+	return tabl[i]
 end
